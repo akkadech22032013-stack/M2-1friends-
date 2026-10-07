@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบวีรกรรม ม.2/1 สุดป่วน</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 15px;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            width: 100%;
+            max-width: 480px;
+        }
+        h2, h3 {
+            color: #1e293b;
+            margin-top: 0;
+            text-align: center;
+        }
+        .page {
+            display: none;
+        }
+        .active {
+            display: block;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: #475569;
+            font-size: 14px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #2563eb;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        button:active {
+            background-color: #1d4ed8;
+            transform: scale(0.98);
+        }
+        .btn-secondary {
+            background-color: #64748b;
+        }
+        .user-badge {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .note-box {
+            background-color: #fef3c7;
+            border: 1px solid #f59e0b;
+            color: #78350f;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .result-box {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #eff6ff;
+            border: 2px dashed #3b82f6;
+            border-radius: 12px;
+            text-align: center;
+            min-height: 70px;
+        }
+        .confession-item {
+            background: #f8fafc;
+            border-left: 4px solid #2563eb;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .author-tag {
+            color: #64748b;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- หน้าที่ 1: เข้าสู่ระบบ -->
+    <div id="loginPage" class="page active">
+        <h2>🔒 เข้าสู่ระบบ ม.2/1</h2>
+        <div class="note-box">
+            ⚠️ <b>ข้อแนะนำ:</b> ไม่ต้องพิมพ์คำว่า "เด็กชาย" หรือ "เด็กหญิง"<br>กรอกเฉพาะ <b>ชื่อ นามสกุล</b> เท่านั้นครับ
+        </div>
+        <div class="input-group">
+            <label for="studentName">กรอกชื่อ-นามสกุล ของคุณ:</label>
+            <input type="text" id="studentName" placeholder="เช่น ณัฐพงษ์ ภูจำนงค์">
+        </div>
+        <button onclick="login()">เข้าสู่ระบบ</button>
+    </div>
+
+    <!-- หน้าที่ 2: เมนูหลัก -->
+    <div id="mainPage" class="page">
+        <div id="userInfo" class="user-badge"></div>
+
+        <h3>📝 พิมพ์บอกวีรกรรมเพื่อน</h3>
+        <div class="input-group">
+            <label for="targetStudent">เลือกเพื่อนที่จะพูดถึง:</label>
+            <select id="targetStudent"></select>
+        </div>
+        <div class="input-group">
+            <label for="storyText">วีรกรรม/เป็นคนยังไง:</label>
+            <textarea id="storyText" rows="3" placeholder="เช่น ชอบตื่นสายประจำ, เป็นหัวหน้าห้องที่ชอบพูดคนเดียว"></textarea>
+        </div>
+        <button onclick="addStory()">บันทึกวีรกรรมนี้</button>
+
+        <hr style="margin: 20px 0; border: none; border-top: 1px solid #e2e8f0;">
+
+        <h3>🎲 สุ่มวีรกรรมเพื่อน</h3>
+        <button onclick="randomStory()" style="background-color: #059669;">🎲 สุ่มวีรกรรมป่วนๆ</button>
+        <div class="result-box">
+            <div id="randomResult" style="font-weight: bold; color: #065f46;">กดปุ่มสุ่มได้เลย!</div>
+        </div>
+
+        <hr style="margin: 20px 0; border: none; border-top: 1px solid #e2e8f0;">
+
+        <h3>📜 วีรกรรมทั้งหมดที่บันทึกไว้</h3>
+        <div id="allStoriesList"></div>
+
+        <button onclick="logout()" class="btn-secondary" style="margin-top: 20px;">ออกจากระบบ</button>
+    </div>
+
+</div>
+
+<script>
+    // รายชื่อนักเรียน ม.2/1 ทั้ง 34 คน (ตัดคำนำหน้าออกเรียบร้อย)
+    const m21Students = [
+        "กตัญญู กอโพธิ์ศรี",
+        "ณัฏฐกร ต้นยาง",
+        "ณัฐพงษ์ ภูจำนงค์",
+        "ธนพนธ์ ปินประเสริฐ",
+        "ธนากร ทองม่วง",
+        "ธภัทร เลิศรัชดาการ",
+        "ปัณณ์ณธีร์ นพคุณ",
+        "ปุญญาพัฒน์ เวียนขุนทด",
+        "พรรษกร ค้าข้าว",
+        "เพชรอ่องพ้นธุ์ คุ้มวงษ์",
+        "ภูมิรพี นวลประเสริฐ",
+        "ภูริภัทร ไชยวิเชียร",
+        "ศุภฤกษ์ ประดิษฐจำค่าย",
+        "สรสิช จิตร์สม",
+        "อภิเชษฐ์ เขียนจตุรัส",
+        "อัคคเดช บอกขุนทด",
+        "จันจิรา บัวไข",
+        "ฉัตรนภา กล่อมขุนทด",
+        "ชลกร หอมจันทึก",
+        "ชลิตา โพธิราช",
+        "ณัฐกมล รัตนพันธ์",
+        "ทิพย์ธารา มาบกุดเวียน",
+        "นุจรี ดินขุนทด",
+        "บุญจิราภา พิพิธกุล",
+        "ปัญญาพร มาเจริญ",
+        "ปิ่นปินัทธ์ โต๊ะป่า",
+        "ปุญจิราภา พิพิธกุล",
+        "มันตรินี โตสุวรรณ",
+        "วรัชยา เฝ้าหนองดู่",
+        "วริศรา หวังมุ่งกลาง",
+        "ศรัณพร สูงสนิท",
+        "อภิญญา หันแถลง",
+        "อินทิรา กลิ่นศรีสุข",
+        "พิชญา ศรีประเสริฐ"
+    ];
+
+    let stories = [
+        { target: "ณัฐกมล รัตนพันธ์", story: "เป็นหัวหน้าห้องที่ชอบพูดคนเดียว", author: "ระบบตั้งต้น" }
+    ];
+
+    let currentUser = "";
+
+    function login() {
+        const inputName = document.getElementById('studentName').value.trim();
+        
+        if (m21Students.includes(inputName)) {
+            currentUser = inputName;
+            document.getElementById('userInfo').innerText = `👤 ผู้ใช้งาน: ${currentUser} (ม.2/1)`;
+            
+            document.getElementById('loginPage').classList.remove('active');
+            document.getElementById('mainPage').classList.add('active');
+
+            loadStudentDropdown();
+            renderStories();
+        } else {
+            alert('❌ ไม่พบชื่อนี้ในรายชื่อ ม.2/1 กรุณาตรวจสอบการสะกดชื่อ-นามสกุล หรือลองเว้นวรรคให้ถูกต้อง (ไม่ต้องใส่เด็กชาย/เด็กหญิง)');
+        }
+    }
+
+    function loadStudentDropdown() {
+        const select = document.getElementById('targetStudent');
+        select.innerHTML = "";
+        m21Students.forEach(student => {
+            const option = document.createElement('option');
+            option.value = student;
+            option.textContent = student;
+            select.appendChild(option);
+        });
+    }
+
+    function addStory() {
+        const target = document.getElementById('targetStudent').value;
+        const story = document.getElementById('storyText').value.trim();
+
+        if (!story) {
+            alert('กรุณากรอกวีรกรรมก่อนบันทึกครับ');
+            return;
+        }
+
+        stories.push({
+            target: target,
+            story: story,
+            author: currentUser
+        });
+
+        alert(`บันทึกเรียบร้อย! คุณได้บอกวีรกรรมของ ${target} แล้ว`);
+        document.getElementById('storyText').value = "";
+        renderStories();
+    }
+
+    function randomStory() {
+        if (stories.length === 0) {
+            document.getElementById('randomResult').innerText = "ยังไม่มีวีรกรรมในระบบ";
+            return;
+        }
+        const randomIndex = Math.floor(Math.random() * stories.length);
+        const item = stories[randomIndex];
+        document.getElementById('randomResult').innerHTML = 
+            `📌 <b>${item.target}</b>: ${item.story}<br><span style="font-size: 12px; color: #64748b;">(บอกโดย: ${item.author})</span>`;
+    }
+
+    function renderStories() {
+        const container = document.getElementById('allStoriesList');
+        container.innerHTML = "";
+        
+        stories.slice().reverse().forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'confession-item';
+            div.innerHTML = `
+                <b>${item.target}:</b> ${item.story}
+                <div class="author-tag">✍️ พิมพ์บอกโดย: <b>${item.author}</b></div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function logout() {
+        currentUser = "";
+        document.getElementById('studentName').value = "";
+        document.getElementById('mainPage').classList.remove('active');
+        document.getElementById('loginPage').classList.add('active');
+    }
+</script>
+
+</body>
+</html>
